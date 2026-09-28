@@ -1,41 +1,51 @@
-buildscript {
-	ext {
-		springBootVersion = '1.5.2.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+plugins {
+	id 'groovy'
+	id 'idea'
+	id 'org.springframework.boot' version '4.1.1'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-
+group = 'com.objectpartners.eskens'
 version = '0.0.1-SNAPSHOT'
-//noinspection GroovyUnusedAssignment
-sourceCompatibility = 1.8
+
+// Builds with any installed JDK 17+ (targets Java 17 bytecode)
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
-	jcenter()
+	mavenCentral()
 }
 
+def spockVersion = '2.4-groovy-5.0'
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.codehaus.groovy:groovy')
-	runtime('com.h2database:h2')
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-restclient'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-h2console'
+	implementation 'org.apache.groovy:groovy'
 
-    def spockVersion = '1.1-groovy-2.4-rc-4'
+	// Pick the database at runtime: H2 (in-memory, default) or PostgreSQL (profile "postgres")
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
 
-	testCompile("org.springframework.boot:spring-boot-starter-test")
-	testCompile("org.spockframework:spock-core:$spockVersion")
-    testCompile("org.spockframework:spock-spring:$spockVersion")
-	testCompile("com.blogspot.toomuchcoding:spock-subjects-collaborators-extension:1.2.1")
-    // needed for mocking in Spock
-    testCompile("cglib:cglib-nodep:2.2")
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:testcontainers-postgresql'
+	testImplementation "org.spockframework:spock-core:$spockVersion"
+	testImplementation "org.spockframework:spock-spring:$spockVersion"
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	testLogging {
+		events = ['passed', 'skipped', 'failed']
+		exceptionFormat = 'full'
+	}
 }

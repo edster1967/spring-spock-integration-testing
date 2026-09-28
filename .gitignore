@@ -30,3 +30,8 @@ nbdist/
 .env
 .env.*
 !.env.example
+
+### File-based H2 database (DB_URL=jdbc:h2:file:./data/...) ###
+/data/
+*.mv.db
+*.trace.db

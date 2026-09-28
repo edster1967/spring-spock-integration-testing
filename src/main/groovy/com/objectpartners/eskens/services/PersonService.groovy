@@ -16,6 +16,14 @@ class PersonService {
         this.externalRankingService = ers
     }
 
+    List<Person> findPersons(String lastName) {
+        lastName ? personRepo.findByLastNameStartingWith(lastName) : personRepo.findAll()
+    }
+
+    Person getPerson(Long personId) {
+        personRepo.findById(personId).orElseThrow { new PersonNotFoundException(personId) }
+    }
+
     String getAddressToForPersonId(Long personId) {
         def p = getPerson(personId)
         "$p.title $p.firstName $p.lastName"
@@ -23,9 +31,5 @@ class PersonService {
 
     Rank getRank(Long personId) {
         externalRankingService.getRank(getPerson(personId))
-    }
-
-    private Person getPerson(Long personId) {
-        personRepo.findOne(personId)
     }
 }

@@ -1,7 +1,9 @@
 package com.objectpartners.eskens.repos
 
+import com.objectpartners.eskens.entities.Person
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
+import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
 /**
@@ -9,6 +11,7 @@ import spock.lang.Specification
  * Created by derek on 4/10/17.
  */
 @DataJpaTest
+@ActiveProfiles('test')
 class PersonRepoTest extends Specification {
 
     @Autowired PersonRepo personRepo
@@ -35,4 +38,18 @@ class PersonRepoTest extends Specification {
         persons.first().firstName == 'James'
     }
 
+    void 'can find by id'() {
+        expect:
+        personRepo.findById(1L).get().lastName == 'Kirk'
+        !personRepo.findById(999L).present
+    }
+
+    void 'saving a new person generates an id after the seed data'() {
+        when:
+        def saved = personRepo.save(new Person(firstName: 'Mr', lastName: 'Spock', title: 'Cmdr'))
+
+        then:
+        saved.id > 1L
+        personRepo.findByLastNameStartingWith('Spo')*.firstName == ['Mr']
+    }
 }
