@@ -1,0 +1,10 @@
+# Normalize line endings so the project works on macOS, Linux and Windows.
+* text=auto eol=lf
+
+# Windows scripts must keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.jar binary
+*.png binary
