@@ -1,16 +1,19 @@
 package com.objectpartners.eskens
 
-import org.junit.Test
-import org.junit.runner.RunWith
+import com.objectpartners.eskens.controllers.PersonController
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.ActiveProfiles
+import spock.lang.Specification
 
-@RunWith(SpringRunner)
 @SpringBootTest
-class ApplicationIntTests {
+@ActiveProfiles('test')
+class ApplicationIntTests extends Specification {
 
-	@Test
-	void contextLoads() {
-	}
+    @Autowired PersonController personController
 
+    void 'context loads'() {
+        expect:
+        personController
+    }
 }

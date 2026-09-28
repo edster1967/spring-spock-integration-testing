@@ -1,0 +1,15 @@
+# Local PostgreSQL for the "postgres" profile. Credentials are read from .env
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-spockdemo}
+      POSTGRES_USER: ${POSTGRES_USER:-spockdemo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
